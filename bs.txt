@@ -1,0 +1,140 @@
+import { generateText, streamText, tool } from "ai";
+import { google } from "@ai-sdk/google";
+import * as mathjs from "mathjs";
+
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import z from "zod";
+
+export default async function Home() {
+  // const { text } = await generateText({
+  //   model: google("models/gemini-2.0-flash-exp"),
+  //   system: `You are a helpful assistant for a password manager application called **GoVault**. Your purpose is to guide users through the app, help them locate features, and answer questions clearly and concisely. Use a friendly tone and provide direct answers with relevant links when appropriate.
+
+  //   Here’s how to help users navigate the app:
+
+  //   - To **edit their profile**, direct them to: https://govault.vercel.app/settings
+  //   - To **generate a strong password**, guide them to: https://govault.vercel.app/generate
+  //   - To **view or manage saved passwords**, point them to: https://govault.vercel.app/vault
+  //   - To **view the dashboard overview**, send them to: https://govault.vercel.app/overview
+  //   - If they ask about the creator, tell them the app was made by **Amar Muric**, a MERN full-stack developer. His GitHub is: https://github.com/amarmuric04
+
+  //   Additional instructions:
+  //   - If a user says “I don’t know where to start,” recommend the Overview page.
+  //   - If they ask about security, explain that passwords are encrypted using strong, industry-standard cryptography before being stored.
+  //   - If they mention losing a password, remind them GoVault does not store master passwords and recommends secure backups.
+  //   - If you’re unsure what the user wants, ask a polite follow-up question to clarify.
+
+  //   Always keep your answers simple and relevant. Don’t overload users with too much information at once unless they ask for it.`,
+  //   prompt: "Wait what did i ask before, sorry.",
+  // });
+
+  // const { text } = await generateText({
+  //   model: google("models/gemini-2.0-flash-exp"),
+  //   messages: [
+  //     {
+  //       role: "user",
+  //       content: [
+  //         { type: "text", text: "Describe the image in detail." },
+  //         {
+  //           type: "image",
+  //           image: "https://avatars.githubusercontent.com/u/113850369?s=96&v=4",
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // });
+
+  // const { text } = await generateText({
+  //   model: google("models/gemini-2.0-flash-exp"),
+  //   messages: [
+  //     { role: "system", content: "You help planning travel itineraries." },
+  //     {
+  //       role: "user",
+  //       content:
+  //         "I am planning a trip to Berlin for 3 days. Please suggest the best tourist activities for me to do.",
+  //     },
+  //   ],
+  // });
+
+  // const recipeSchema = z.object({
+  //   recipe: z.object({
+  //     name: z.string(),
+  //     ingredients: z.array(
+  //       z.object({
+  //         name: z.string(),
+  //         amount: z.string(),
+  //       })
+  //     ),
+  //     steps: z.array(z.string()),
+  //   }),
+  // });
+
+  // const { textStream } = streamText({
+  //   model: google("models/gemini-2.0-flash-exp"),
+  //   prompt: "Write a poem about embedding models.",
+  // });
+
+  // for await (const textPart of textStream) {
+  //   console.log(textPart);
+  // }
+
+  const { toolCalls, steps } = await generateText({
+    model: google("models/gemini-2.0-flash-exp"),
+    tools: {
+      calculate: tool({
+        description:
+          "A tool for evaluating mathematical expressions. Example expressions: " +
+          "'1.2 * (2 + 4.5)', '12.7 cm to inch', 'sin(45 deg) ^ 2'.",
+        parameters: z.object({ expression: z.string() }),
+        execute: async ({ expression }) => mathjs.evaluate(expression),
+      }),
+      // answer tool: the LLM will provide a structured answer
+      answer: tool({
+        description: "A tool for providing the final answer.",
+        parameters: z.object({
+          steps: z.array(
+            z.object({
+              calculation: z.string(),
+              reasoning: z.string(),
+            })
+          ),
+          answer: z.string(),
+        }),
+        // no execute function - invoking it will terminate the agent
+      }),
+    },
+    toolChoice: "required",
+    maxSteps: 10,
+    onStepFinish({ text, toolCalls, toolResults, finishReason, usage }) {
+      console.log("A step has finished " + text);
+    },
+    system:
+      "You are solving math problems. " +
+      "Reason step by step. " +
+      "Use the calculator when necessary. " +
+      "The calculator can only do simple additions, subtractions, multiplications, and divisions. " +
+      "When you give the final answer, provide an explanation for how you got it.",
+    prompt:
+      "A taxi driver earns $9461 per 1-hour work. " +
+      "If he works 12 hours a day and in 1 hour he uses 14-liters petrol with price $134 for 1-liter. " +
+      "How much money does he earn in one day?",
+  });
+  const allToolCalls = steps.flatMap((step) => step.toolCalls);
+  console.log(`FINAL TOOL CALLS: ${JSON.stringify(toolCalls, null, 2)}`);
+  console.log(steps);
+
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="prose dark:prose-invert max-w-none">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeHighlight]}
+        >
+          {JSON.stringify(toolCalls, null, 2)}
+        </ReactMarkdown>
+      </div>
+    </div>
+  );
+}
