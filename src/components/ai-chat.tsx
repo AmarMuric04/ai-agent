@@ -151,9 +151,11 @@ export function Chat({
 
       <div
         className={cn(
-          "absolute transition-all h-[650px] w-[400px] flex flex-col mx-auto border border-purple-100 bg-white rounded-3xl overflow-hidden",
-          horizontal === "right" ? "left-full ml-4" : "right-full mr-4",
-          vertical === "top" ? "bottom-1/2" : "top-1/2",
+          "absolute transition-all mx-auto border border-purple-100 bg-white rounded-3xl overflow-hidden",
+          "aspect-[8/13] w-[90vw] max-w-md",
+          "flex flex-col",
+          horizontal === "right" ? "left-0" : "right-0",
+          vertical === "top" ? "bottom-full" : "top-full",
           !isOpen && "scale-0 pointer-events-none"
         )}
       >
@@ -177,7 +179,7 @@ export function Chat({
         <div className="flex-1 p-4 overflow-y-auto" ref={scrollAreaRef}>
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-8">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-r from-purple-500 to-teal-400 flex items-center justify-center mb-4">
+              <div className="h-8 w-8 p-1 lg:p-0 lg:h-16 lg:w-16 rounded-full bg-gradient-to-r from-purple-500 to-teal-400 flex items-center justify-center mb-4">
                 <Sparkles className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2">

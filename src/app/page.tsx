@@ -22,7 +22,7 @@ export default function Home() {
           configKey="coding"
         >
           <div className="rounded-full h-8 w-8 bg-primary text-primary-foreground grid place-items-center">
-            <Bot size={18} />
+            AI
           </div>
         </Chat>
       </div>
