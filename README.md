@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 Next.js AI Chat Component
 
-## Getting Started
+A plug-and-play AI chat component built for Next.js that makes embedding an AI agent into your application a breeze.
 
-First, run the development server:
+## 🚀 Features
+
+- 🔧 **Easy Setup** — Just define your config in `ai.config.ts` and you're good to go.
+- 💬 **Reusable Component** — Wrap it around any clickable element to open the chat.
+- ⚡ **Lightweight & Customizable** — Built for simple one-session chats with minimal overhead.
+- 🛡️ **TypeScript Safe** — Strong typings across the entire app.
+- 📦 **Dependency Optionality** — Only uses third-party packages for code snippet formatting, easily removable if not needed.
+
+---
+
+## 🧰 Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install uuid react-markdown remark-gfm react-syntax-highlighter
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> **Note:** You also need `shadcn/ui`'s `Button`, `Avatar`, and `Textarea` components. Make sure you’ve set up [shadcn/ui](https://ui.shadcn.com/docs/installation).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔧 Setup
 
-## Learn More
+1. **Create an API key** from [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. **Add your key** to a `.env.local` file:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+GOOGLE_GENERATIVE_AI_API_KEY=your-api-key-here
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Create an `ai.config.ts` file** in your project root:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```ts
+// ai.config.ts
+export const aiConfig = {
+  default: {
+    model: "gemini-pro",
+    system: "You are a helpful assistant.",
+  },
+  // Add more configs if needed
+};
+```
 
-## Deploy on Vercel
+> Or just copy the existing one from the codebase and tweak it.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 💡 Usage
+
+Wrap the component around any clickable **non-button** element:
+
+```tsx
+import { Chat } from "@/components/ai-chat";
+
+<Chat title="Ask Me Anything" configKey="default">
+  <div className="cursor-pointer">💬 Chat With AI</div>
+</Chat>;
+```
+
+> **Important:** Do **not** use a `<button>` as the trigger element — the component already wraps itself in a button internally.
+
+---
+
+## 🧩 Props
+
+```ts
+type ChatProps = {
+  children: React.ReactNode; // Trigger element
+  title?: string; // Optional chat header title
+  description?: string; // Optional preview description
+  configKey?: string; // Key from ai.config.ts
+  system?: string; // Custom override system prompt
+  placeholder?: string; // Input field placeholder
+  initialMessages?: Message[]; // Preloaded chat messages
+  api?: string; // Custom API endpoint (defaults to /api/chat)
+};
+```
+
+---
+
+## 🧼 Optional Slimming
+
+The following packages are only required for code snippet formatting. If you don’t need them, feel free to remove:
+
+- `react-markdown`
+- `remark-gfm`
+- `react-syntax-highlighter`
+
+---
+
+## 📌 Notes
+
+- The chat is designed for **short-lived, contextless sessions**.
+- No session or local storage is used.
+- The interface is minimal and easy to embed in dashboards or apps.
+
+---
+
+## 📁 Project Structure (Simplified)
+
+```
+components/
+└── ai-chat.tsx
+ai.config.ts
+pages/
+└── api/
+└── chat.ts
+.env.local
+```
+
+---
+
+## 🛠️ Contributing
+
+Pull requests are welcome! Feel free to open an issue if you want to suggest improvements or report bugs.
+
+---
+
+## 📝 License
+
+MIT
