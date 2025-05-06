@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { v4 as uuidv4 } from "uuid";
 
 type ChatProps = {
   /** The UI element that triggers the chat (e.g., button, icon, etc.) */
@@ -22,11 +23,11 @@ type ChatProps = {
   /** Optional text that will be shown at the top of the chat */
   title?: string;
 
-  /** Optional text displayed in the chat preview */
-  brand?: string;
+  /** Optional text that will be shown in the chat preview */
+  description?: string;
 
   /** Optional config key to load system message and model from ai.config.ts */
-  configKey?: "default" | "supportBot" | "devAssistant";
+  configKey?: string;
 
   /** Optional custom system message to override config file */
   system?: string;
@@ -43,7 +44,7 @@ type ChatProps = {
 
 export function Chat({
   title = "AI Agent",
-  brand = "Our Brand",
+  description = "Ask me anything related to Our Brand! I can help with information, navigating through the website, and more",
   configKey,
   system,
   placeholder,
@@ -54,7 +55,7 @@ export function Chat({
   const [isOpen, setIsOpen] = useState(false);
   const [horizontal, setHorizontal] = useState<"left" | "right">("right");
   const [vertical, setVertical] = useState<"top" | "bottom">("top");
-  const [chatKey, setChatKey] = useState(0);
+  const [chatKey, setChatKey] = useState(() => uuidv4());
   const [inputRows, setInputRows] = useState(1);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLSpanElement>(null);
@@ -132,7 +133,7 @@ export function Chat({
   };
 
   const resetConversation = () => {
-    setChatKey((prev) => prev + 1);
+    setChatKey(() => uuidv4());
   };
 
   return (
@@ -183,8 +184,7 @@ export function Chat({
                 Welcome to the AI Chat
               </h3>
               <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                Ask me anything related to {brand}! I can help with information,
-                navigating through the website, and more.
+                {description}
               </p>
             </div>
           ) : (
