@@ -1,6 +1,6 @@
 "use client";
 
-import { useChat } from "ai/react";
+import { Message, useChat } from "ai/react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
@@ -15,19 +15,74 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export function Chat({ children }: { children: React.ReactNode }) {
+type ChatProps = {
+  /** The UI element that triggers the chat (e.g., button, icon, etc.) */
+  children: React.ReactNode;
+
+  /** Optional text that will be shown at the top of the chat */
+  title?: string;
+
+  /** Optional text displayed in the chat preview */
+  brand?: string;
+
+  /** Optional config key to load system message and model from ai.config.ts */
+  configKey?: "default" | "supportBot" | "devAssistant";
+
+  /** Optional custom system message to override config file */
+  system?: string;
+
+  /** Optional placeholder override for the input field */
+  placeholder?: string;
+
+  /** Optional starting message(s) */
+  initialMessages?: Message[];
+
+  /** Optional API route if not using default /api/chat */
+  api?: string;
+};
+
+export function Chat({
+  title = "AI Agent",
+  brand = "Our Brand",
+  configKey,
+  system,
+  placeholder,
+  initialMessages,
+  api,
+  children,
+}: ChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [horizontal, setHorizontal] = useState<"left" | "right">("right");
   const [vertical, setVertical] = useState<"top" | "bottom">("top");
-
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
-    useChat({
-      api: "/api/chat",
-    });
-
+  const [chatKey, setChatKey] = useState(0);
   const [inputRows, setInputRows] = useState(1);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLSpanElement>(null);
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
+    useChat({
+      id: String(chatKey),
+      api: api || "/api/chat",
+      initialMessages,
+      body: {
+        configKey,
+        system,
+      },
+    });
+
+  useEffect(() => {
+    if (!system && !configKey) {
+      console.warn(
+        "[Chat] Neither 'system' nor 'configKey' was provided. Default config will be used."
+      );
+    }
+
+    if (system && configKey) {
+      throw new Error(
+        "You can't use both 'system' and 'configKey' at the same time. Choose one."
+      );
+    }
+  }, [system, configKey]);
 
   useEffect(() => {
     const rows = input.split("\n").length;
@@ -76,6 +131,10 @@ export function Chat({ children }: { children: React.ReactNode }) {
     setIsOpen((prev) => !prev);
   };
 
+  const resetConversation = () => {
+    setChatKey((prev) => prev + 1);
+  };
+
   return (
     <div className="relative w-fit">
       <TooltipProvider>
@@ -91,7 +150,7 @@ export function Chat({ children }: { children: React.ReactNode }) {
 
       <div
         className={cn(
-          "absolute transition-all h-[650px] w-[400px] flex flex-col mx-auto border border-purple-100 rounded-3xl overflow-hidden",
+          "absolute transition-all h-[650px] w-[400px] flex flex-col mx-auto border border-purple-100 bg-white rounded-3xl overflow-hidden",
           horizontal === "right" ? "left-full ml-4" : "right-full mr-4",
           vertical === "top" ? "bottom-1/2" : "top-1/2",
           !isOpen && "scale-0 pointer-events-none"
@@ -102,14 +161,12 @@ export function Chat({ children }: { children: React.ReactNode }) {
             <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-teal-400 flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <h2 className="font-semibold">Gemini 2.0 Flash</h2>
+            <h2 className="font-semibold">{title}</h2>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {
-              window.location.reload();
-            }}
+            onClick={resetConversation}
             title="Clear conversation"
           >
             <Trash2 className="h-5 w-5" />
@@ -123,11 +180,11 @@ export function Chat({ children }: { children: React.ReactNode }) {
                 <Sparkles className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2">
-                Welcome to Gemini Chat
+                Welcome to the AI Chat
               </h3>
               <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                Ask me anything! I can help with information, creative tasks,
-                problem-solving, and more.
+                Ask me anything related to {brand}! I can help with information,
+                navigating through the website, and more.
               </p>
             </div>
           ) : (
@@ -157,7 +214,7 @@ export function Chat({ children }: { children: React.ReactNode }) {
               <Textarea
                 value={input}
                 onChange={handleInputChange}
-                placeholder="Message Gemini..."
+                placeholder={placeholder || "Ask something..."}
                 className="resize-none pr-10 py-3 rounded-2xl border-purple-100 dark:border-gray-700 focus-visible:ring-purple-500 break-words w-full max-w-full"
                 rows={inputRows}
                 onKeyDown={(e) => {
