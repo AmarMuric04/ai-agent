@@ -12,12 +12,11 @@ export default function Home() {
           placeholder="Ask a question..."
           configKey="default"
         >
-          <div className="rounded-full h-8 w-8 bg-primary text-primary-foreground grid place-items-center">
+          <button className="rounded-full h-8 w-8 bg-primary text-primary-foreground grid place-items-center">
             <Bot size={18} />
-          </div>
+          </button>
         </Chat>
         <div className="flex flex-col items-center gap-6 px-3 py-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md w-fit">
-          {/* Theme Toggle */}
           <button className="flex flex-col items-center group">
             <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-100 dark:group-hover:bg-purple-900 transition">
               <Moon size={18} className="text-gray-600 dark:text-gray-300" />
@@ -47,9 +46,9 @@ export default function Home() {
             configKey="support"
           >
             <div className="flex flex-col items-center group cursor-pointer">
-              <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-100 dark:group-hover:bg-purple-900 transition">
+              <button className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-100 dark:group-hover:bg-purple-900 transition">
                 <Bot size={18} className="text-gray-600 dark:text-gray-300" />
-              </div>
+              </button>
               <span className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
                 Support
               </span>
@@ -70,9 +69,9 @@ export default function Home() {
           placeholder="Help me learn a language..."
           configKey="linguistics"
         >
-          <div className="rounded-md bg-gradient-to-r px-2 py-1 from-purple-500 to-teal-400 bg-primary text-primary-foreground grid place-items-center">
+          <button className="rounded-md bg-gradient-to-r px-2 py-1 from-purple-500 to-teal-400 bg-primary text-primary-foreground grid place-items-center">
             Ask the AI
-          </div>
+          </button>
         </Chat>
         <div className="flex items-center gap-4 px-4 py-2 bg-white dark:bg-gray-900 rounded-full shadow-sm">
           <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
@@ -96,9 +95,9 @@ export default function Home() {
             placeholder="What are you having trouble with?"
             configKey="support"
           >
-            <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <Bot size={20} />
-            </div>
+            </button>
           </Chat>
 
           <div className="h-5 w-px bg-gray-300 dark:bg-gray-600" />

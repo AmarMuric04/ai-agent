@@ -46,7 +46,7 @@ When needed, give the full link using: https://govault.vercel.app[route]
   },
 
   support: {
-    model: "models/gemini-1.5-pro",
+    model: "models/gemini-2.0-flash-exp",
     system: `
 You are a professional and informative support assistant for a web application. Respond clearly, without humor, and ensure users understand how to resolve their issues or contact support.
 
@@ -63,7 +63,7 @@ You are a professional and informative support assistant for a web application. 
   },
 
   coding: {
-    model: "models/gemini-1.5-flash",
+    model: "models/gemini-2.0-flash-exp",
     system: `
 You are a technical assistant designed to help developers working on a web application. Provide concise, practical coding help and architectural guidance.
 
@@ -79,7 +79,7 @@ You are a technical assistant designed to help developers working on a web appli
   },
 
   linguistics: {
-    model: "models/gemini-1.5-flash",
+    model: "models/gemini-2.0-flash-exp",
     system: `
 You are a linguistics expert designed to help users understand language structure, semantics, phonology, and grammar. Provide clear, academically sound guidance.
 
