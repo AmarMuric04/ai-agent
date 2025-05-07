@@ -12,13 +12,15 @@ A plug-and-play AI chat component built for Next.js that makes embedding an AI a
 
 ---
 
+To see it in an actual application, go to [GoVault](https://govault.vercel.app)
+
 ## 🧰 Installation
 
 ```bash
 npm install uuid react-markdown remark-gfm react-syntax-highlighter
 ```
 
-> **Note:** You also need `shadcn/ui`'s `Button`, `Avatar`, and `Textarea` components. Make sure you’ve set up [shadcn/ui](https://ui.shadcn.com/docs/installation).
+> **Note:** You also need `shadcn/ui`'s `Button`, `Avatar`, `Popover` and `Textarea` components. Make sure you’ve set up [shadcn/ui](https://ui.shadcn.com/docs/installation).
 
 ---
 
@@ -50,7 +52,7 @@ export const aiConfig = {
 
 ## 💡 Usage
 
-Wrap the component around any clickable **non-button** element:
+Wrap the component around any clickable element:
 
 ```tsx
 import { Chat } from "@/components/ai-chat";
@@ -59,10 +61,6 @@ import { Chat } from "@/components/ai-chat";
   <div className="cursor-pointer">💬 Chat With AI</div>
 </Chat>;
 ```
-
-> **Important:** Do **not** use a `<button>` as the trigger element — the component already wraps itself in a button internally.
-
----
 
 ## 🧩 Props
 
