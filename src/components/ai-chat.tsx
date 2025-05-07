@@ -116,12 +116,12 @@ export function Chat({
           sideOffset={20}
           alignOffset={20}
           className={cn(
-            "transition-all opacity-100 border border-purple-100 bg-white rounded-3xl overflow-hidden",
+            "transition-all opacity-100 border border-accent bg-background rounded-3xl overflow-hidden",
             "aspect-[8/13] w-[90vw] max-w-md",
             "flex flex-col"
           )}
         >
-          <div className="flex items-center justify-between p-4 border-b border-purple-100 dark:border-gray-700">
+          <div className="flex items-center justify-between p-4 border-b border-accent">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-teal-400 flex items-center justify-center">
                 <Sparkles className="h-4 w-4 text-white" />
@@ -172,7 +172,7 @@ export function Chat({
             )}
           </div>
 
-          <div className="p-4 border-t border-purple-100 dark:border-gray-700 w-full">
+          <div className="p-4 border-t border-accent  w-full">
             <form onSubmit={handleSubmit} className="flex gap-2 w-full">
               <div className="relative flex-1 w-full">
                 <Textarea
