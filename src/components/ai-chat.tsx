@@ -39,6 +39,11 @@ type ChatProps = {
 
   /** Optional API route if not using default /api/chat */
   api?: string;
+
+  pos?: {
+    side?: "top" | "right" | "bottom" | "left" | undefined;
+    align?: "center" | "start" | "end" | undefined;
+  };
 };
 
 export function Chat({
@@ -49,6 +54,10 @@ export function Chat({
   placeholder,
   initialMessages,
   api,
+  pos = {
+    side: "right",
+    align: "start",
+  },
   children,
 }: ChatProps) {
   const [chatKey, setChatKey] = useState(() => uuidv4());
@@ -102,8 +111,8 @@ export function Chat({
         <PopoverTrigger asChild>{children}</PopoverTrigger>
 
         <PopoverContent
-          side="right"
-          align="start"
+          side={pos.side}
+          align={pos.align}
           sideOffset={20}
           alignOffset={20}
           className={cn(

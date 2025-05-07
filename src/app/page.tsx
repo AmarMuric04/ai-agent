@@ -11,6 +11,10 @@ export default function Home() {
           description="Ask me anything related to the application! I can help with information, giving advice, navigating and more!"
           placeholder="Ask a question..."
           configKey="default"
+          pos={{
+            side: "top",
+            align: "center",
+          }}
         >
           <button className="rounded-full h-8 w-8 bg-primary text-primary-foreground grid place-items-center">
             <Bot size={18} />
@@ -44,6 +48,10 @@ export default function Home() {
             description="Ask me anything related to support! I can help with any issues you're having, giving advice and more!"
             placeholder="What are you having trouble with?"
             configKey="support"
+            pos={{
+              side: "left",
+              align: "center",
+            }}
           >
             <div className="flex flex-col items-center group cursor-pointer">
               <button className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-100 dark:group-hover:bg-purple-900 transition">
@@ -68,6 +76,10 @@ export default function Home() {
           description="Ask me anything related to languages! I can help with grammar, giving advice, writing text and more!"
           placeholder="Help me learn a language..."
           configKey="linguistics"
+          pos={{
+            side: "top",
+            align: "center",
+          }}
         >
           <button className="rounded-md bg-gradient-to-r px-2 py-1 from-purple-500 to-teal-400 bg-primary text-primary-foreground grid place-items-center">
             Ask the AI
@@ -94,6 +106,10 @@ export default function Home() {
             description="Ask me anything related to support! I can help with any issues you're having, giving advice and more!"
             placeholder="What are you having trouble with?"
             configKey="support"
+            pos={{
+              side: "top",
+              align: "center",
+            }}
           >
             <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
               <Bot size={20} />
