@@ -53,12 +53,14 @@ export function Chat({
   children,
 }: ChatProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [horizontal, setHorizontal] = useState<"left" | "right">("right");
-  const [vertical, setVertical] = useState<"top" | "bottom">("top");
+  const [popupOffsetY, setPopupOffsetY] = useState(0);
+  const [horizontal, setHorizontal] = useState<string>("right");
+  const [vertical, setVertical] = useState<string>("top");
   const [chatKey, setChatKey] = useState(() => uuidv4());
   const [inputRows, setInputRows] = useState(1);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLSpanElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
     useChat({
@@ -107,37 +109,61 @@ export function Chat({
 
   const handleTriggerClick = () => {
     const triggerEl = triggerRef.current;
-    if (triggerEl) {
-      const rect = triggerEl.getBoundingClientRect();
+    const chatEl = chatRef.current;
+    if (!triggerEl || !chatEl) return;
 
-      const spaceRight = window.innerWidth - rect.right;
-      const spaceLeft = rect.left;
+    const { top, bottom, left, right } = triggerEl.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
 
-      const spaceAbove = rect.top;
-      const spaceBelow = window.innerHeight - rect.bottom;
+    const space = {
+      right: vw - right,
+      left: left,
+      below: vh - bottom,
+      above: top,
+    };
 
-      if (spaceRight < 420 && spaceLeft > spaceRight) {
-        setHorizontal("left");
-      } else {
-        setHorizontal("right");
-      }
+    const { width: popW, height: popH } = chatEl.getBoundingClientRect();
 
-      if (spaceBelow < 660 && spaceAbove > spaceBelow) {
-        setVertical("top");
-      } else {
-        setVertical("bottom");
-      }
+    // Decide horizontal placement
+    let horiz: "left" | "right" | "center" = "right";
+    if (space.right < popW && space.left >= popW) {
+      horiz = "left";
+    } else if (space.right < popW && space.left < popW) {
+      horiz = "center";
     }
 
-    setIsOpen((prev) => !prev);
-  };
+    let vert: "top" | "bottom" | "middle" = "bottom";
+    if (space.below < popH && space.above >= popH) {
+      vert = "top";
+    } else if (space.below < popH && space.above < popH) {
+      vert = "middle";
+    }
 
+    requestAnimationFrame(() => {
+      const rect = chatEl.getBoundingClientRect();
+      const overflowTop = Math.max(0, -rect.top);
+      const overflowBottom = Math.max(0, rect.bottom - vh);
+      let translateY;
+
+      if (overflowTop > 0 || overflowBottom > 0) {
+        translateY =
+          overflowTop > overflowBottom ? overflowTop : -overflowBottom;
+
+        setPopupOffsetY(translateY);
+      }
+    });
+
+    setHorizontal(horiz);
+    setVertical(vert);
+    setIsOpen((open) => !open);
+  };
   const resetConversation = () => {
     setChatKey(() => uuidv4());
   };
 
   return (
-    <div className="relative w-fit">
+    <div className="relative w-fit h-fit">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
@@ -150,13 +176,27 @@ export function Chat({
       </TooltipProvider>
 
       <div
+        ref={chatRef}
+        style={{
+          transform: `translateY(${popupOffsetY}px)`,
+        }}
         className={cn(
-          "absolute transition-all mx-auto border border-purple-100 bg-white rounded-3xl overflow-hidden",
+          "absolute transition-all opacity-100 border border-purple-100 bg-white rounded-3xl overflow-hidden",
           "aspect-[8/13] w-[90vw] max-w-md",
           "flex flex-col",
-          horizontal === "right" ? "left-0" : "right-0",
-          vertical === "top" ? "bottom-full" : "top-full",
-          !isOpen && "scale-0 pointer-events-none"
+          !isOpen ? "opacity-0 pointer-events-none" : "z-[999]",
+
+          horizontal === "left" && "right-0",
+          horizontal === "right" && "left-0",
+          horizontal === "center" && "left-1/2 -translate-x-1/2",
+          vertical === "middle" && horizontal === "left" && "right-[110%]",
+          vertical === "middle" && horizontal === "right" && "left-[110%]",
+
+          vertical === "top" && "bottom-full",
+          vertical === "bottom" && "top-full",
+          vertical === "middle" && "top-1/2 -translate-y-1/2",
+          horizontal === "center" && vertical === "top" && "-translate-y-full",
+          horizontal === "center" && vertical === "bottom" && "translate-y-full"
         )}
       >
         <div className="flex items-center justify-between p-4 border-b border-purple-100 dark:border-gray-700">
